@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#This shell script creates MRI scan data directories for a specific participant at a specific time point, changes format of scans, and backs up all scan data from server to these directories. 
+#Created by Feng Gu in September 2019. Modified by Feng Gu in May 2020. 
 
 
 ###################### SETTING UP ###########################
