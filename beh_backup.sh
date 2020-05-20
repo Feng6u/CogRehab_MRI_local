@@ -26,7 +26,8 @@ elif [ -z ${ID} ]    #if user forgets to input ID:
 then
         echo "---------------------------------------------------------------------------------------------------------
 ERROR: Subject ID was not supplied. The subject ID (e.g., 'CR001') should be supplied as the first argument.
-Example:  '/bin/bash /home/cranilab/Documents/CRANI/Active_Studies/CogRehab/Analyses/Bash_scripts/CR_backup.sh CR001 1'
+Example: "/bin/bash /home/cranilab/Documents/CRANI/Active_Studies/CogRehab/Analyses/Shell_scripts/beh_backup.sh CR001 1"
+
 ---------------------------------------------------------------------------------------------------------"
 
 exit 2
@@ -36,7 +37,7 @@ elif [ -z ${TP} ]  #if user forgets to input TP:
 then
         echo "---------------------------------------------------------------------------------------------------------
 ERROR: Time point was not supplied. The time point (e.g., '1' or '2') should be supplied as the second argument.
-Example:  '/bin/bash /home/cranilab/Documents/CRANI/Active_Studies/CogRehab/Analyses/Bash_scripts/CR_backup.sh CR001 1'
+Example: "/bin/bash /home/cranilab/Documents/CRANI/Active_Studies/CogRehab/Analyses/Shell_scripts/beh_backup.sh CR001 1"
 ---------------------------------------------------------------------------------------------------------"
 
 exit 3
