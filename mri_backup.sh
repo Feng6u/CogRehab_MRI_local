@@ -39,7 +39,7 @@ ERROR: Please type the full ID of the particiapnt, including the letters (e.g., 
 exit 3
 
 
-elif [ ${#TP} -ne 1 ]  #if user enters TP incorrectly (length of TP is not equal to 3 characters):
+elif [ ${#TP} -ne 1 ]  #if user enters TP incorrectly (length of TP is not equal to 1 characters):
 
 then 
 	echo  "---------------------------------------------------------------------------------------------------------
