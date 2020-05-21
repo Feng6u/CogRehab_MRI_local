@@ -29,4 +29,4 @@ Shell ahd R scripts used locally for organization of scans before uploading them
 	- Needs to add an alias to ~/.bashrc file with the username and IP address for this to work
 
 8. CR_backup.sh
-	- combines steps 1, 3, 6 and 7 together
+	- combines steps 1, 3, 6 and 7 together. This is the master backup script and is the only script that needs to be run for the backup process. It asks for user's input for ID and TP. 
