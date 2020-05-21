@@ -1,44 +1,106 @@
 #!/bin/bash
 
-ID=$1
+#This shell script is a master backup script for a specific participant at a specific time point. This is the only script that needs to be run for backing up all data on computer and on server. 
 
-if [ -z $ID ]
-then
-        echo "---------------------------------------------------------------------------------------------------------
-ERROR: No argument was supplied. The subject ID (e.g., 'CR000') should be supplied as the first argument.
-Example:  '/bin/bash /home/cranilab/Documents/CRANI/Active_Studies/CogRehab/Analyses/Bash_scripts/CR_backup.sh CR000'
----------------------------------------------------------------------------------------------------------"
+#It does the following things in order: 
+#	1. Creates MRI data folders on CRANI desktop for ID_TP
+#	2. Copies DICOM data files downloaded from server to participant's folder 
+#	3. Changes scan data format from DICOM to NIFTI
+#	4. Copies NIFTI data files to participant's folder
+#	5. Quality control of T1 (needs user's inspection)
+#	6. Creates behavoiral data folders on CRANI desktop for ID_TP
+#	7. Copies edat3 files (E-prime original output) for each run of each fMRI task from the CogRehab USB disk into the behavoiral data folders created on CRANI desktop
+#	8. Copies the merged txt file (created using E-Merge and then exported using E-Data) from the CogRehab USB disk into the participant's folder on CRANI desktop
+#	9. Separates the merged txt file into 7 text files, 1 file for each run of each task
+#	10. Sends behavorial data files for ID_TP from local computer to the BIC server (to Feng's BIC folders, as backup)
+#	11. Sends MRI data files for ID_TP from local computer to the BIC server (to Feng's BIC folders, as backup)
+#	12. Transfers user to the BIC server to proceed to the analysis on the server 
 
-exit 1
 
-elif [ $ID == "CR000" ]
-then 
-	 echo "---------------------------------------------------------------------------------------------------------
-ERROR: Participant CR000 does not exist. Please modify the participant ID. 
----------------------------------------------------------------------------------------------------------"
+#Created by Feng Gu in September 2019. Modified by Feng Gu in May 2020. 
 
-exit 2
 
-elif [ ! -d /media/cranilab/USB\ DISK/ ]
+####################################################### SETTING UP ############################################
+
+if [ ! -d /media/cranilab/KINGSTON/ ]  #Because beh_back.sh requires data from the CogRehab USB disk, it is important to plug in the USB disk before proceeding. This if condition reminds user to insert the USB. 
 
 then 
 	 echo "---------------------------------------------------------------------------------------------------------
 ERROR: Please insert the USB stick with CogRehab E-prime output data to start. 
 ---------------------------------------------------------------------------------------------------------"
 
-exit 3
+exit
 
 fi
 
 
+echo "Please enter participant's ID (e.g., CR001) and press [ENTER]:"  #Ask user to input particiapnt's ID
+
+read ID  #Take user's input as the particiapnt's ID
+
+if [ ${#ID} -ne 5 ]  #Make sure the input has the length of 5 characters
+
+then 
+	echo  "---------------------------------------------------------------------------------------------------------
+ERROR: Please type the full ID of the particiapnt, including the letters (e.g., CR001) 
+---------------------------------------------------------------------------------------------------------"
+
+exit
+
+fi
 
 
-CR_HOME="/home/cranilab/Documents/CRANI/Active_Studies/CogRehab"
+echo "Please enter the time point for ${ID} (e.g., 1) and press [ENTER]:" #Ask user to input time point
 
-/bin/bash $CR_HOME/Analyses/Shell_scripts/mri_backup.sh $ID &&
+read TP #Take user's input as the time point
 
-/bin/bash $CR_HOME/Analyses/Shell_scripts/beh_backup.sh $ID &&
+if [ ${#TP} -ne 1 ]  #Make sure the input has the length of 1 character
 
-/bin/bash $CR_HOME/Analyses/Shell_scripts/rsync.sh $ID &&
+then 
+	echo  "---------------------------------------------------------------------------------------------------------
+ERROR: Please type the number for time point. Do not include the letters (e.g., 1) 
+---------------------------------------------------------------------------------------------------------"
 
-ssh feng@10.156.156.24
+exit
+
+fi
+
+
+echo "Please press [ENTER] to confirm this is correct: ${ID}_TP${TP}. If incorrect, please type "N" to exit." #Give user a chance to check and change input
+
+read confirmation
+
+if [ "$confirmation" == "N" ] #If user enters "N", exit this program
+
+then 
+	echo "---------------------------------------------------------------------------------------------------------
+Please rerun this script.
+---------------------------------------------------------------------------------------------------------"
+
+exit
+
+else			#If user confirms the ID and TP are correct, then show this on the screen and then proceed
+
+	echo "---------------------------------------------------------------------------------------------------------
+Thank you!! Now backing up data for ${ID}_TP${TP}....						
+---------------------------------------------------------------------------------------------------------" 
+
+fi
+
+
+####################################################### DEFINING VARIABLES ############################################
+
+SCRIPTS_HOME="/home/cranilab/Documents/CRANI/Active_Studies/CogRehab/Analyses/Shell_scripts/"  #defines SCRIPTS_HOME as the folder for CogRehab analysis scripts
+
+
+####################################################### RUNNING SCRIPTS ############################################
+
+/bin/bash $SCRIPTS_HOME/mri_backup.sh $ID $TP &&   #Run mri_back.sh, supply ID and TP as two arguments. If runs successfully, then proceed to the next line of code. 
+
+/bin/bash $SCRIPTS_HOME/beh_backup.sh $ID $TP &&  #Run beh_back.sh, supply ID and TP as two arguments. If runs successfully, then proceed to the next line of code. 
+
+/bin/bash $SCRIPTS_HOME/rsync.sh $ID $TP &&  #Run rsync.sh, supply ID and TP as two arguments. If runs successfully, then proceed to the next line of code. 
+
+
+####################################################### MOVING TO SERVER ############################################
+ssh feng@10.156.156.23  #SSH to BIC server
