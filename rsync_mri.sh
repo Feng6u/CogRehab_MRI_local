@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #This shell script copies MRI data files for a specific participant at a specific time point from local computer to the BIC server (to Feng's BIC folders, as backup). 
-#Created by Feng Gu in September 2019. Modified by Feng Gu in May 2020. 
+#Created by Feng Gu in September 2019. Last modified by Feng Gu in December 2020. 
 
 
 ####################################################### SETTING UP ############################################
@@ -63,6 +63,8 @@ rsync -r $M_PATH/VM/VM_Encoding/${ID}_TP${TP}/* feng@10.156.156.23:$FENG_PATH/MR
 rsync -r $M_PATH/VM/VM_Recog/${ID}_TP${TP}/* feng@10.156.156.23:$FENG_PATH/MRI_scan_data/VM/VM_Recog/${ID}_TP${TP}/  #send VM_recog data to server
 rsync -r $M_PATH/EFN_BACK/${ID}_TP${TP}/* feng@10.156.156.23:$FENG_PATH/MRI_scan_data/EFN_BACK/${ID}_TP${TP}/  #send EFN_BACK data to server
 rsync -r $M_PATH/FB/${ID}_TP${TP}/* feng@10.156.156.23:$FENG_PATH/MRI_scan_data/FB/${ID}_TP${TP}/  #send FB data to server
+if [ $TP -eq 1 ] #because NM is only measured in T1
+then
 rsync -r $M_PATH/NM/${ID}_TP${TP}/* feng@10.156.156.23:$FENG_PATH/MRI_scan_data/NM/${ID}_TP${TP}/  #send NM data to server
-
+fi
 

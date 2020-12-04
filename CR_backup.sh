@@ -17,7 +17,7 @@
 #	12. Transfers user to the BIC server to proceed to the analysis on the server 
 
 
-#Created by Feng Gu in September 2019. Modified by Feng Gu in May 2020. 
+#Created by Feng Gu in September 2019. Last modified by Feng Gu in December 2020. 
 
 
 ####################################################### SETTING UP ############################################
@@ -90,7 +90,7 @@ fi
 
 ####################################################### DEFINING VARIABLES ############################################
 
-SCRIPTS_HOME="/home/cranilab/Documents/CRANI/Active_Studies/CogRehab/Analyses/Shell_scripts/"  #defines SCRIPTS_HOME as the folder for CogRehab analysis scripts
+SCRIPTS_HOME="/home/cranilab/Documents/CRANI/Active_Studies/CogRehab/Analyses/MRI_local/"  #defines SCRIPTS_HOME as the folder for CogRehab analysis scripts
 
 
 ####################################################### RUNNING SCRIPTS ############################################

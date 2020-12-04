@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #This shell script creates MRI scan data directories for a specific participant at a specific time point, changes format of scans, and backs up all scan data from server to these directories. 
-#Created by Feng Gu in September 2019. Modified by Feng Gu in May 2020. 
+#Created by Feng Gu in September 2019. Last modified by Feng Gu in Dec. 2020. 
 
 
 ###################### SETTING UP ###########################
@@ -58,14 +58,18 @@ fi
 
 M_PATH="/home/cranilab/Documents/CRANI/Active_Studies/CogRehab/Data/MRI_data/MRI_scan_data/"  #define the path where MRI data are stored as M_PATH
 
+if [ $TP -eq 1 ] #because NM is only measured in T1
+then
 ONE_RUN="T1 RESTING VM/VM_Recog NM"  #these 4 tasks have 1 run each. Define them as ONE_RUN
+else
+ONE_RUN="T1 RESTING VM/VM_Recog"  #these 3 tasks have 1 run each. Define them as ONE_RUN
+fi
 
 TWO_RUNS="VM/VM_Encoding EFN_BACK FB" #these 3 tasks have 2 runs each. Define them as TWO_RUNS
 
 RUNS="Run1 Run2" #define RUNS as Run1 and Run2. Will be used to name folders
 
 TEMP="/home/cranilab/Desktop" #use the desktop as a temporary folder for data to be downloaded (will be deleted at the end)
-
 
 
 
@@ -195,7 +199,13 @@ ERROR: SCAN FOR FALSE BELIEF RUN2 NOT FOUND!!
 
 exit 9
 
-elif [ ! -d $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-goldStar_NM_ref36_phOS20/ ]
+fi
+
+
+if [ $TP -eq 1 ] #because NM is only measured in T1
+then
+
+	if [ ! -d $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-goldStar_NM_ref36_phOS20/ ]
 
 then 
 	 echo "---------------------------------------------------------------------------------------------------------
@@ -235,9 +245,14 @@ cp -r $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-fMRI_FB_run1/. $M_PATH/FB/${ID}_TP${TP}/R
 cp -r $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-fMRI_FB_run2/. $M_PATH/FB/${ID}_TP${TP}/Run2/dcm 
 #copy dcm files of run2 of FB downloaded from server into the folder setup in the CogRehab folder as backup
 
+
+if [ $TP -eq 1 ] #because NM is only measured in T1
+then
+
 cp -r $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-goldStar_NM_ref36_phOS20/. $M_PATH/NM/${ID}_TP${TP}/dcm 
 #copy dcm files of NM downloaded from server into the folder setup in the CogRehab folder as backup
 
+fi
 
 
 
@@ -270,9 +285,13 @@ FB_RUN1=$(ls $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-fMRI_FB_run1/ | sort -n | head -1)
 FB_RUN2=$(ls $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-fMRI_FB_run2/ | sort -n | head -1)
 #define FB_RUN2 as the file name of the first dcm file in the FB_run2 folder (to prepare for mri_convert) 
 
+if [ $TP -eq 1 ] #because NM is only measured in T1
+then
+
 NM=$(ls $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-goldStar_NM_ref36_phOS20/ | sort -n | head -1)
 #define NM as the file name of the first dcm file in the NM folder (to prepare for mri_convert) 
 
+fi
 
 
 #using mri_convert to convert DICOM files to NIFTI files with the names that FreeSurfer likes and save into each respective folder in the CogRehab folder:
@@ -285,9 +304,10 @@ mri_convert $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-fMRI_EFN_run1/$EFN_RUN1 $M_PATH/EFN
 mri_convert $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-fMRI_EFN_run2/$EFN_RUN2 $M_PATH/EFN_BACK/${ID}_TP${TP}/Run2/nii/f.nii
 mri_convert $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-fMRI_FB_run1/$FB_RUN1 $M_PATH/FB/${ID}_TP${TP}/Run1/nii/f.nii
 mri_convert $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-fMRI_FB_run2/$FB_RUN2 $M_PATH/FB/${ID}_TP${TP}/Run2/nii/f.nii
+if [ $TP -eq 1 ] #because NM is only measured in T1
+then
 mri_convert $TEMP/${ID}_TP${TP}/*/[0-9][0-9]-goldStar_NM_ref36_phOS20/$NM $M_PATH/NM/${ID}_TP${TP}/nii/nm.nii
-
-
+fi
 
 
 ##################################### CLEANING UP #############################
