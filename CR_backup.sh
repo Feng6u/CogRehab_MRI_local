@@ -95,12 +95,42 @@ SCRIPTS_HOME="/home/cranilab/Documents/CRANI/Active_Studies/CogRehab/Analyses/MR
 
 ####################################################### RUNNING SCRIPTS ############################################
 
-/bin/bash $SCRIPTS_HOME/mri_backup.sh $ID $TP &&   #Run mri_back.sh, supply ID and TP as two arguments. If runs successfully, then proceed to the next line of code. 
+/bin/bash $SCRIPTS_HOME/mri_backup.sh $ID $TP
+mri=$?
+if [ $mri -ne 0 ]
+then mri_msg="mri_backup.sh was NOT executed successfully :("
+fi
 
-/bin/bash $SCRIPTS_HOME/beh_backup.sh $ID $TP &&  #Run beh_back.sh, supply ID and TP as two arguments. If runs successfully, then proceed to the next line of code. 
+/bin/bash $SCRIPTS_HOME/beh_backup.sh $ID $TP
+beh=$?
+if [ $beh -ne 0 ]
+then beh_msg="beh_backup.sh was NOT executed successfully :("
+fi
 
-/bin/bash $SCRIPTS_HOME/rsync.sh $ID $TP &&  #Run rsync.sh, supply ID and TP as two arguments. If runs successfully, then proceed to the next line of code. 
+/bin/bash $SCRIPTS_HOME/rsync.sh $ID $TP
+rsync_all=$?
+if [ $rsync_all -ne 0 ]
+then rsync_msg="rsync.sh was NOT executed successfully :("
+fi
 
+
+####################################################### ENDING ############################################
+
+if [ ${#mri_msg} -eq 0 ] && [ ${#beh_msg} -eq 0 ] && [ ${#rsync_msg} -eq 0 ]
+
+then
+echo "---------------------------------------------------------------------------------------------------------
+Successfully backed up data for ${ID}_TP${TP}!
+---------------------------------------------------------------------------------------------------------"
+
+else
+
+echo "
+----------------------------------------------------------------------------------------------------------------
+$mri_msg $beh_msg $rsync_msg
+-------------------------------------------------------------------------------------------------------------"
+
+fi
 
 ####################################################### MOVING TO SERVER ############################################
 ssh feng@10.156.156.23  #SSH to BIC server
